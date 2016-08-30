@@ -2,7 +2,7 @@ module CfDeployer
   module Driver
     class Route53
       def initialize(aws_route53 = nil)
-        @aws_route53 = aws_route53 || AWS::Route53.new
+        @aws_route53 = aws_route53 || Aws::Route53.new
       end
 
       def find_alias_target(hosted_zone_name, target_host_name)
@@ -74,7 +74,7 @@ module CfDeployer
       def get_hosted_zone(zone_name)
         @aws_route53.hosted_zones.find { |z| z.name == trailing_dot(zone_name.downcase) }
       end
-      
+
       def get_record_set(hosted_zone, target_host_name)
        hosted_zone.resource_record_sets.find { |r| r.name == trailing_dot(target_host_name.downcase) }
       end

@@ -4,7 +4,7 @@ require 'rainbow/ext/string'
 module CfDeployer
   class StatusPresenter
 
-    VERBOSITY_3_SKIP = ['AWS::AutoScaling::AutoScalingGroup','AWS::EC2::Instance',:asg_instances, :instances]
+    VERBOSITY_3_SKIP = ['Aws::AutoScaling::AutoScalingGroup','Aws::EC2::Instance',:asg_instances, :instances]
 
     PAD = "  "
     UNPADDED_TABLE_CELL_WIDTH = 85
@@ -91,7 +91,7 @@ module CfDeployer
       output << ''
       output << "#{PAD * 2}AutoScalingGroups:"
       asg_hash.each do |asg_name, asg_instances|
-        asg_color = status_color @info[component_name][stack_name][:resources]['AWS::AutoScaling::AutoScalingGroup'][asg_name]
+        asg_color = status_color @info[component_name][stack_name][:resources]['Aws::AutoScaling::AutoScalingGroup'][asg_name]
         output << ''
         output << "#{PAD * 3}#{ Rainbow(asg_name).color asg_color }"
         instances_status output, component_name, stack_name, asg_instances, true

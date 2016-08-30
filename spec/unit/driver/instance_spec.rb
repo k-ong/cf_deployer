@@ -11,10 +11,10 @@ describe CfDeployer::Driver::Instance do
                  }
 
 
-      aws = double AWS::EC2
-      expect(AWS::EC2).to receive(:new) { aws }
+      aws = double Aws::EC2
+      expect(Aws::EC2).to receive(:new) { aws }
 
-      instance_collection = double AWS::EC2::InstanceCollection
+      instance_collection = double Aws::EC2
       expect(aws).to receive(:instances) { instance_collection }
 
       instance = Fakes::Instance.new expected.merge( { :id => 'i-wxyz1234' } )

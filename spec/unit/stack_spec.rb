@@ -218,14 +218,14 @@ describe CfDeployer::Stack do
 
     it 'should be fine to get not exist error after deletion' do
       allow(@stack).to receive(:exists?).and_return(true, true)
-      allow(@stack).to receive(:stack_status).and_raise(AWS::CloudFormation::Errors::ValidationError.new('the stack does not exist'))
+      allow(@stack).to receive(:stack_status).and_raise(Aws::CloudFormation::Errors::ValidationError.new(Seahorse::Client::RequestContext.new, 'the stack does not exist'))
       expect(@cf_driver).to receive(:delete_stack)
       expect {@stack.delete}.not_to raise_error
     end
 
     it 'should raise an error if a validation error is thrown not about stack does not exist' do
       allow(@stack).to receive(:exists?).and_return(true, true)
-      allow(@stack).to receive(:stack_status).and_raise(AWS::CloudFormation::Errors::ValidationError.new('I am an error'))
+      allow(@stack).to receive(:stack_status).and_raise(Aws::CloudFormation::Errors::ValidationError.new(Seahorse::Client::RequestContext.new, 'I am an error'))
       expect(@cf_driver).to receive(:delete_stack)
       expect {@stack.delete}.to raise_error
     end
@@ -259,7 +259,7 @@ describe CfDeployer::Stack do
 
     it 'should add instance status info for instances in ASGs' do
       asg = double CfDeployer::Driver::AutoScalingGroup
-      rs = { 'AWS::AutoScaling::AutoScalingGroup' => { 'ASG123' => :some_status } }
+      rs = { 'Aws::AutoScaling::AutoScalingGroup' => { 'ASG123' => :some_status } }
       expect(@cf_driver).to receive(:resource_statuses) { rs }
       expect(asg).to receive(:instance_statuses) { { 'i-abcd1234' => { :status => :some_status } } }
       expect(CfDeployer::Driver::AutoScalingGroup).to receive(:new).with('ASG123') { asg }
@@ -268,7 +268,7 @@ describe CfDeployer::Stack do
 
     it 'should add instance status info for instances NOT in ASGs' do
       instance = double CfDeployer::Driver::Instance
-      rs = { 'AWS::EC2::Instance' => { 'i-abcd1234' => :some_status } }
+      rs = { 'Aws::EC2::Instance' => { 'i-abcd1234' => :some_status } }
       expect(@cf_driver).to receive(:resource_statuses) { rs }
       expect(CfDeployer::Driver::Instance).to receive(:new).with('i-abcd1234') { instance }
       expect(instance).to receive(:status) { { :status => :some_status } }

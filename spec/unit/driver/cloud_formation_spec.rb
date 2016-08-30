@@ -7,17 +7,17 @@ describe 'CloudFormation' do
   let(:parameters) { double('parameters')}
   let(:resource_summaries) { [
       {
-          :resource_type => 'AWS::AutoScaling::AutoScalingGroup',
+          :resource_type => 'Aws::AutoScaling::AutoScalingGroup',
           :physical_resource_id => 'asg_1',
           :resource_status => 'STATUS_1'
       },
       {
-          :resource_type => 'AWS::AutoScaling::LaunchConfiguration',
+          :resource_type => 'Aws::AutoScaling::LaunchConfiguration',
           :physical_resource_id => 'launch_config_1',
           :resource_status => 'STATUS_2'
       },
       {
-          :resource_type => 'AWS::AutoScaling::AutoScalingGroup',
+          :resource_type => 'Aws::AutoScaling::AutoScalingGroup',
           :physical_resource_id => 'asg_2',
           :resource_status => 'STATUS_2'
       }
@@ -31,7 +31,7 @@ describe 'CloudFormation' do
   }
 
   before(:each) do
-    allow(AWS::CloudFormation).to receive(:new) { cloudFormation }
+    allow(Aws::CloudFormation).to receive(:new) { cloudFormation }
   end
 
   it 'should get outputs of stack' do
@@ -65,7 +65,7 @@ describe 'CloudFormation' do
 
     it 'returns false if no updates were performed (because no difference in template)' do
       cloud_formation = CfDeployer::Driver::CloudFormation.new 'my_stack'
-      expect(cloud_formation).to receive(:aws_stack).and_raise(AWS::CloudFormation::Errors::ValidationError.new('No updates are to be performed'))
+      expect(cloud_formation).to receive(:aws_stack).and_raise(Aws::CloudFormation::Errors::ValidationError.new(Seahorse::Client::RequestContext.new, 'No updates are to be performed'))
       result = nil
 
       CfDeployer::Driver::DryRun.disable_for do
@@ -93,11 +93,11 @@ describe 'CloudFormation' do
   context 'resource_statuses' do
     it 'should get resource statuses' do
       expected = {
-          'AWS::AutoScaling::AutoScalingGroup' => {
+          'Aws::AutoScaling::AutoScalingGroup' => {
               'asg_1' => 'STATUS_1',
               'asg_2' => 'STATUS_2'
           },
-          'AWS::AutoScaling::LaunchConfiguration' => {
+          'Aws::AutoScaling::LaunchConfiguration' => {
               'launch_config_1' => 'STATUS_2'
           }
       }

@@ -19,7 +19,7 @@ describe 'Kill Inactive' do
       blue_stack.live!
       green_stack.live!
       elb_driver = double('elb_driver')
-      allow(CfDeployer::Driver::Elb).to receive(:new) { elb_driver }
+      allow(CfDeployer::Driver::ElasticLoadBalancing).to receive(:new) { elb_driver }
       allow(elb_driver).to receive(:find_dns_and_zone_id).with('BLUE-elb') { {:dns_name => 'blue-elb.aws.amazon.com', :canonical_hosted_zone_name_id => 'BLUE111'}}
       allow(elb_driver).to receive(:find_dns_and_zone_id).with('GREEN-elb') { {:dns_name => 'green-elb.aws.amazon.com', :canonical_hosted_zone_name_id => 'GREEN111'}}
       allow(CfDeployer::Stack).to receive(:new).with('cf-deployer-sample-cname-swap-test-web-B', 'web', anything) { blue_stack }

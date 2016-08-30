@@ -31,7 +31,7 @@ describe 'Deploy' do
     it 'should recreate inactive stack and set CNAME map to its ELB dns' do
       allow(CfDeployer::Stack).to receive(:new).with('cf-deployer-sample-cname-swap-dev-web-B', 'web', anything()) { blue_stack }
       allow(CfDeployer::Stack).to receive(:new).with('cf-deployer-sample-cname-swap-dev-web-G', 'web', anything()) { green_stack }
-      allow(CfDeployer::Driver::Elb).to receive(:new) { elb_driver }
+      allow(CfDeployer::Driver::ElasticLoadBalancing).to receive(:new) { elb_driver }
       allow(CfDeployer::Driver::Route53).to receive(:new) { dns_driver }
       allow(dns_driver).to receive(:find_alias_target).with('aws-dev.manheim.com', 'cf-deployer-test.aws-dev.manheim.com'){ 'BLUE-elb.aws-dev.manheim.com' }
       allow(elb_driver).to receive(:find_dns_and_zone_id).with('BLUE-elb') { {:dns_name => 'blue-elb.aws-dev.manheim.com', :canonical_hosted_zone_name_id => 'BLUE111'}}

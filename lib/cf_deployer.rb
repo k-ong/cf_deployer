@@ -38,7 +38,7 @@ require_relative 'cf_deployer/defaults'
 
 module CfDeployer
 
-  AWS.config(:max_retries => 20)
+  # Aws.config.update({:max_retries => 20})
 
   def self.config opts
     config = self.parseconfig opts, false
@@ -50,19 +50,19 @@ module CfDeployer
 
   def self.deploy opts
     config = self.parseconfig opts
-    # AWS.config(:logger => Logger.new($stdout))
+    # Aws.config.update(:logger => Logger.new($stdout))
     Application.new(config).deploy
   end
 
   def self.runhook opts
     config = self.parseconfig opts
-    # AWS.config(:logger => Logger.new($stdout))
+    # Aws.config.update(:logger => Logger.new($stdout))
     Application.new(config).run_hook opts[:component].first, opts[:hook_name]
   end
 
   def self.destroy opts
     config = self.parseconfig opts, false
-    # AWS.config(:logger => Logger.new($stdout))
+    # Aws.config.update(:logger => Logger.new($stdout))
     Application.new(config).destroy
   end
 
@@ -97,7 +97,7 @@ module CfDeployer
   private
 
   def self.parseconfig options, validate_inputs = true
-    AWS.config(:region => options[:region]) if options[:region]
+    Aws.config.update(:region => options[:region]) if options[:region]
     options[:cli_overrides] = {:settings => options.delete(:settings), :inputs => options.delete(:inputs)}
     config = ConfigLoader.new.load options
     ConfigValidation.new.validate config, validate_inputs

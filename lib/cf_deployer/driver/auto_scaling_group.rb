@@ -99,7 +99,7 @@ module CfDeployer
       private
 
       def aws_group
-        @my_group ||= AWS::AutoScaling.new.groups[group_name]
+        @my_group ||= Aws::AutoScaling.new.groups[group_name]
       end
     end
   end

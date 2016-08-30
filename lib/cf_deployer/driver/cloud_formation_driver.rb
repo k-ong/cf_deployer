@@ -22,7 +22,7 @@ module CfDeployer
             aws_stack.update opts.merge(:template => template)
           end
 
-        rescue AWS::CloudFormation::Errors::ValidationError => e
+        rescue Aws::CloudFormation::Errors::ValidationError => e
           if e.message =~ /No updates are to be performed/
             Log.info e.message
             return false
@@ -80,7 +80,7 @@ module CfDeployer
       private
 
       def cloud_formation
-        AWS::CloudFormation.new
+        Aws::CloudFormation.new
       end
 
       def aws_stack

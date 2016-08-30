@@ -56,7 +56,7 @@ module CfDeployer
     def find_output key
       begin
         @cf_driver.query_output(key)
-      rescue AWS::CloudFormation::Errors::ValidationError => e
+      rescue Aws::CloudFormation::Errors::ValidationError => e
         raise ResourceNotInReadyState.new("Resource stack not in ready state yet, perhaps you should provision it first?")
       end
     end
@@ -88,20 +88,18 @@ module CfDeployer
     end
 
     def resource_statuses
-      AWS.memoize do
-        resources = @cf_driver.resource_statuses.merge( { :asg_instances => {}, :instances => {} } )
-        if resources['AWS::AutoScaling::AutoScalingGroup']
-          resources['AWS::AutoScaling::AutoScalingGroup'].keys.each do |asg_name|
-            resources[:asg_instances][asg_name] = CfDeployer::Driver::AutoScalingGroup.new(asg_name).instance_statuses
-          end
+      resources = @cf_driver.resource_statuses.merge( { :asg_instances => {}, :instances => {} } )
+      if resources['Aws::AutoScaling::AutoScalingGroup']
+        resources['Aws::AutoScaling::AutoScalingGroup'].keys.each do |asg_name|
+          resources[:asg_instances][asg_name] = CfDeployer::Driver::AutoScalingGroup.new(asg_name).instance_statuses
         end
-        if resources['AWS::EC2::Instance']
-          resources['AWS::EC2::Instance'].keys.each do |instance_id|
-            resources[:instances][instance_id] = CfDeployer::Driver::Instance.new(instance_id).status
-          end
-        end
-        resources
       end
+      if resources['Aws::EC2::Instance']
+        resources['Aws::EC2::Instance'].keys.each do |instance_id|
+          resources[:instances][instance_id] = CfDeployer::Driver::Instance.new(instance_id).status
+        end
+      end
+      resources
     end
 
     def name
@@ -167,7 +165,7 @@ module CfDeployer
           begin
             Log.info "current status: #{stack_status}"
             sleep 15
-          rescue AWS::CloudFormation::Errors::ValidationError => e
+          rescue Aws::CloudFormation::Errors::ValidationError => e
             if e.message =~ /does not exist/
               break # This is what we wanted anyways
             else

@@ -1,3 +1,6 @@
+require 'psych'
+require "yaml"
+
 module CfDeployer
   class ConfigLoader
 

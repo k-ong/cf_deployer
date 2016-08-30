@@ -14,7 +14,7 @@ describe 'Autoscaling group driver' do
   let(:load_balancer) { double('load_balancer', :instances => [instance1, instance2, instance3, instance4]) }
 
   before :each do
-    allow(AWS::AutoScaling).to receive(:new) { scaling }
+    allow(Aws::AutoScaling).to receive(:new) { scaling }
     allow(group).to receive(:load_balancers) { [] }
     allow(group).to receive(:auto_scaling_instances) { [] }
     allow(group).to receive(:ec2_instances) { [] }
@@ -193,7 +193,7 @@ describe 'Autoscaling group driver' do
 
   describe '#instance_statuses' do
     it 'should get the status for any EC2 instances' do
-      aws_instance = double AWS::EC2::Instance
+      aws_instance = double Aws::EC2::Instance
       expect(aws_instance).to receive(:id) { 'i-abcd1234' }
       allow(@driver).to receive(:ec2_instances) { [ aws_instance ] }
 
