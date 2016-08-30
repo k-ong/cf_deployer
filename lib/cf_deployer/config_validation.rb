@@ -85,7 +85,7 @@ module CfDeployer
     def check_environments
       @config[:environments] ||= {}
       @config[:environments].each do | name, environment |
-        @errors << "Environment name cannot be longer than 12 and can only contain letters, numbers, '-' and '.': #{name}" unless name =~ /^[a-zA-Z0-9\.-]{1,12}$/
+        @errors << "Environment name cannot be longer than 25 and can only contain letters, numbers, '-' and '.': #{name}" unless name =~ /^[a-zA-Z0-9\.-]{1,25}$/
         check_environment_options(name, environment)
       end
     end
