@@ -353,7 +353,7 @@ describe "Config Validation" do
   end
 
 
-  it "should get error if environment name is longer than 12" do
+  it "should get error if environment name is longer than 25" do
     config = {
       :targets => ['base'],
       :application => "app",
@@ -361,10 +361,10 @@ describe "Config Validation" do
         :base => {}
         },
       :environments => {
-        ("a"*13).to_sym => {}
+        ("a"*26).to_sym => {}
       }
     }
-    expect{CfDeployer::ConfigValidation.new.validate(config)}.to raise_error("Environment name cannot be longer than 12 and can only contain letters, numbers, '-' and '.': #{"a"*13}")
+    expect{CfDeployer::ConfigValidation.new.validate(config)}.to raise_error("Environment name cannot be longer than 25 and can only contain letters, numbers, '-' and '.': #{"a"*26}")
   end
 
   it "should get error if environment name contains invalid characters" do
@@ -379,8 +379,8 @@ describe "Config Validation" do
         :b_env => {}
       }
     }
-    expect{CfDeployer::ConfigValidation.new.validate(config)}.to raise_error(/Environment name cannot be longer than 12 and can only contain letters, numbers, '-' and '.': a@ss/)
-    expect{CfDeployer::ConfigValidation.new.validate(config)}.to raise_error(/Environment name cannot be longer than 12 and can only contain letters, numbers, '-' and '.': b_env/)
+    expect{CfDeployer::ConfigValidation.new.validate(config)}.to raise_error(/Environment name cannot be longer than 25 and can only contain letters, numbers, '-' and '.': a@ss/)
+    expect{CfDeployer::ConfigValidation.new.validate(config)}.to raise_error(/Environment name cannot be longer than 25 and can only contain letters, numbers, '-' and '.': b_env/)
   end
 
 
