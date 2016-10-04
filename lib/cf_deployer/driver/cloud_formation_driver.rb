@@ -12,14 +12,15 @@ module CfDeployer
 
       def create_stack template, opts
         CfDeployer::Driver::DryRun.guard "Skipping create_stack" do
-          cloud_formation.stacks.create @stack_name, template, opts
+          cloud_formation.create_stack({ stack_name: @stack_name, template_body: template }.merge(opts))
         end
       end
 
       def update_stack template, opts
         begin
           CfDeployer::Driver::DryRun.guard "Skipping update_stack" do
-            aws_stack.update opts.merge(:template => template)
+            # aws_stack.update opts.merge(:template => template)
+            cloud_formation.update_stack({ stack_name: @stack_name, template_body: template }.merge(opts))
           end
 
         rescue Aws::CloudFormation::Errors::ValidationError => e
@@ -35,7 +36,7 @@ module CfDeployer
       end
 
       def stack_status
-        aws_stack.status.downcase.to_sym
+        aws_stack.stack_status.downcase.to_sym
       end
 
       def outputs
@@ -57,7 +58,8 @@ module CfDeployer
       def delete_stack
         if stack_exists?
           CfDeployer::Driver::DryRun.guard "Skipping create_stack" do
-            aws_stack.delete
+            # aws_stack.delete
+            cloud_formation.delete_stack({ stack_name: @stack_name })
           end
         else
           Log.info "Stack #{@stack_name} does not exist!"
@@ -80,11 +82,11 @@ module CfDeployer
       private
 
       def cloud_formation
-        Aws::CloudFormation.new
+        Aws::CloudFormation::Client.new
       end
 
       def aws_stack
-        cloud_formation.stacks[@stack_name]
+        cloud_formation.describe_stacks({ stack_name: @stack_name }).stacks.first
       end
 
     end

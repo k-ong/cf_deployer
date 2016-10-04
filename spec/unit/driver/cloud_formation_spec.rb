@@ -24,14 +24,13 @@ describe 'CloudFormation' do
   ] }
   let(:stack) { double('stack', :outputs => outputs, :parameters => parameters, :resource_summaries => resource_summaries) }
   let(:cloudFormation) {
-    double('cloudFormation',
-           :stacks =>
-           {'testStack' => stack
-           })
+      double('cloudFormation',
+        :describe_stacks => {'testStack' => stack}
+      )
   }
 
   before(:each) do
-    allow(Aws::CloudFormation).to receive(:new) { cloudFormation }
+    allow(Aws::CloudFormation::Client).to receive(:new) { cloudFormation }
   end
 
   it 'should get outputs of stack' do
@@ -45,7 +44,7 @@ describe 'CloudFormation' do
   context 'update_stack' do
     it 'skips the stack update if dry run is enabled' do
       cloud_formation = CfDeployer::Driver::CloudFormation.new 'my_stack'
-      expect(cloud_formation).to receive(:aws_stack).never
+      expect(cloud_formation).to receive(:update_stack).never
 
       CfDeployer::Driver::DryRun.enable_for do
         cloud_formation.update_stack :template, {}
@@ -54,6 +53,7 @@ describe 'CloudFormation' do
 
     it 'returns false if no updates were performed (because of dry run)' do
       cloud_formation = CfDeployer::Driver::CloudFormation.new 'my_stack'
+      expect(cloud_formation).to receive(:update_stack).with('my_stack', :template, {})
       result = nil
 
       CfDeployer::Driver::DryRun.enable_for do
