@@ -85,12 +85,12 @@ module CfDeployer
       end
 
       def healthy_instance_count
-        AWS.memoize do
+        # AWS.memoize do
           instances = healthy_instance_ids
           instances &= in_service_instance_ids unless load_balancers.empty?
           Log.info "Healthy instance count: #{instances.count}"
           instances.count
-        end
+        # end
       rescue => e
         Log.error "Unable to determine healthy instance count due to error: #{e.message}"
         -1

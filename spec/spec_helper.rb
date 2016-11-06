@@ -3,12 +3,13 @@ Dir.glob("#{File.dirname File.absolute_path(__FILE__)}/fakes/*.rb") { |file| req
 
 CfDeployer::Log.log.outputters = nil
 
-RSPEC_LOG = Logger.new(STDOUT)
-RSPEC_LOG.level = Logger::WARN
+RSPEC_LOG = Log4r::Logger.new('cf_deployer')
+RSPEC_LOG.outputters = Log4r::Outputter.stdout
+RSPEC_LOG.level = Log4r::WARN
 
 if ENV['DEBUG']
-  RSPEC_LOG.level = Logger::DEBUG
-  AWS.config :logger => RSPEC_LOG
+  RSPEC_LOG.level = Log4r::DEBUG
+  Aws.config.update(:logger => RSPEC_LOG)
 end
 
 def puts *args

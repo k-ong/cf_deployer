@@ -22,7 +22,7 @@ module CfDeployer
       end
 
       def aws_instance
-        @instance_obj ||= Aws::EC2.new.instances[@id]
+        @instance_obj ||= Aws::EC2::Client.new.instances[@id]
       end
     end
   end

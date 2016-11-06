@@ -19,7 +19,6 @@ module CfDeployer
       def update_stack template, opts
         begin
           CfDeployer::Driver::DryRun.guard "Skipping update_stack" do
-            # aws_stack.update opts.merge(:template => template)
             cloud_formation.update_stack({ stack_name: @stack_name, template_body: template }.merge(opts))
           end
 
@@ -41,25 +40,27 @@ module CfDeployer
 
       def outputs
         aws_stack.outputs.inject({}) do |memo, o|
-          memo[o.key] = o.value
+          memo[o.output_key] = o.output_value
           memo
         end
       end
 
       def parameters
-        aws_stack.parameters
+        aws_stack.parameters.inject({}) do |memo, o|
+          memo[o.parameter_key] = o.parameter_value
+          memo
+        end
       end
 
       def query_output key
-        output = aws_stack.outputs.find { |o| o.key == key }
-        output && output.value
+        output = aws_stack.outputs.find { |o| o.output_key == key }
+        output && output.output_value
       end
 
       def delete_stack
         if stack_exists?
           CfDeployer::Driver::DryRun.guard "Skipping create_stack" do
-            # aws_stack.delete
-            cloud_formation.delete_stack({ stack_name: @stack_name })
+            aws_stack.delete
           end
         else
           Log.info "Stack #{@stack_name} does not exist!"
@@ -76,7 +77,7 @@ module CfDeployer
       end
 
       def template
-        aws_stack.template
+        cloud_formation.get_template({stack_name: @stack_name})
       end
 
       private
@@ -86,7 +87,8 @@ module CfDeployer
       end
 
       def aws_stack
-        cloud_formation.describe_stacks({ stack_name: @stack_name }).stacks.first
+        stack_resource = Aws::CloudFormation::Resource.new(client: cloud_formation)
+        stack_resource.stack(@stack_name)
       end
 
     end

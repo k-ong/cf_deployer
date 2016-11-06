@@ -6,6 +6,7 @@ require 'timeout'
 require 'aws-sdk'
 require 'erb'
 require 'fileutils'
+require 'logger'
 require 'log4r'
 require 'pp'
 require 'forwardable'
@@ -38,8 +39,6 @@ require_relative 'cf_deployer/defaults'
 
 module CfDeployer
 
-  # Aws.config.update({:max_retries => 20})
-
   def self.config opts
     config = self.parseconfig opts, false
     config[:components].each do |component, c_hash|
@@ -50,19 +49,16 @@ module CfDeployer
 
   def self.deploy opts
     config = self.parseconfig opts
-    # Aws.config.update(:logger => Logger.new($stdout))
     Application.new(config).deploy
   end
 
   def self.runhook opts
     config = self.parseconfig opts
-    # Aws.config.update(:logger => Logger.new($stdout))
     Application.new(config).run_hook opts[:component].first, opts[:hook_name]
   end
 
   def self.destroy opts
     config = self.parseconfig opts, false
-    # Aws.config.update(:logger => Logger.new($stdout))
     Application.new(config).destroy
   end
 

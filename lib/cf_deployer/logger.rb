@@ -17,10 +17,10 @@ module CfDeployer
 
     def self.log
       return @log if @log
-      @log = Logger.new('cf_deployer')
-      outputter = Outputter.stdout
-      outputter.formatter = PatternFormatter.new(:pattern => "%d [%l] (%c) %M", :date_pattern => "%y-%m-%d %H:%M:%S")
-      @log.outputters = outputter
+      @log = Log4r::Logger.new('cf_deployer')
+      # outputter = Outputter.stdout
+      # outputter.formatter = PatternFormatter.new(:pattern => "%d [%l] (%c) %M", :date_pattern => "%y-%m-%d %H:%M:%S")
+      @log.outputters = Outputter.stdout
       @log.level = Log4r::INFO
       @log
     end
